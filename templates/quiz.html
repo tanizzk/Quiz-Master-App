@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.title }} | Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h4>{{ quiz.title }}</h4>
+            <p class="text-muted small mb-0">{{ quiz.chapter.name }} · {{ quiz.chapter.subject.name }}</p>
+          </div>
+
+          <div>
+            <span class="badge bg-secondary">Timer</span>
+            <div id="quiz-timer" data-duration="{{ quiz.duration_minutes or 0 }}" class="fw-bold fs-5 mt-1"></div>
+          </div>
+        </div>
+
+        {% if quiz.questions %}
+
+        <form method="post" id="quiz-form">
+
+          <div class="quiz-progress mb-3">
+            <span id="question-counter">Question 1/{{ quiz.questions|length }}</span>
+
+            <div class="progress mt-2">
+              <div
+                id="progress-bar"
+                class="progress-bar"
+                role="progressbar"
+                style="width:0%"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              ></div>
+            </div>
+          </div>
+
+          {% for question in quiz.questions %}
+          <div class="quiz-question card mb-4" data-index="{{ loop.index0 }}">
+            <div class="card-body">
+
+              <p class="fw-bold">{{ loop.index }}. {{ question.statement }}</p>
+
+              {% for key, option in [
+                ("a", question.option_a),
+                ("b", question.option_b),
+                ("c", question.option_c),
+                ("d", question.option_d),
+              ] if option %}
+
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="question_{{ question.id }}"
+                  id="question_{{ question.id }}_{{ key }}"
+                  value="{{ key }}"
+                >
+
+                <label
+                  class="form-check-label"
+                  for="question_{{ question.id }}_{{ key }}"
+                >
+                  {{ option }}
+                </label>
+              </div>
+
+              {% endfor %}
+
+            </div>
+          </div>
+          {% endfor %}
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <button type="button" class="btn btn-outline-secondary" id="prev-question">
+              Previous
+            </button>
+
+            <button type="button" class="btn btn-outline-secondary" id="next-question">
+              Next
+            </button>
+          </div>
+
+        </form>
+
+        {% else %}
+        <p class="text-muted">This quiz does not yet have questions configured.</p>
+        {% endif %}
+
+      </div>
+    </div>
+
+    {% if quiz.questions %}
+    <div class="mt-3">
+      <button
+        class="btn btn-success btn-lg w-100"
+        id="quiz-submit"
+        form="quiz-form"
+      >
+        Submit Quiz
+      </button>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+
+<div class="modal fade" id="submitModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Submit Quiz</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        Are you sure you want to submit the quiz?
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+
+        <button class="btn btn-primary" id="confirm-submit">
+          Submit
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="{{ url_for('static', filename='js/quiz_timer.js') }}"></script>
+<script src="{{ url_for('static', filename='js/quiz_flashcard.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Questions | Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-5">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-4">Add question for {{ quiz.title }}</h5>
+        <form method="post">
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            {{ form.statement.label(class_="form-label") }}
+            {{ form.statement(class_="form-control", rows=3) }}
+          </div>
+          <div class="mb-3">
+            {{ form.option_a.label(class_="form-label") }}
+            {{ form.option_a(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.option_b.label(class_="form-label") }}
+            {{ form.option_b(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.option_c.label(class_="form-label") }}
+            {{ form.option_c(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.option_d.label(class_="form-label") }}
+            {{ form.option_d(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.correct_option.label(class_="form-label") }}
+            {{ form.correct_option(class_="form-select") }}
+          </div>
+          <div class="d-grid">
+            {{ form.submit(class_="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Questions</h5>
+        <ul class="list-group list-group-flush">
+          {% for question in quiz.questions %}
+          <li class="list-group-item">
+            <p class="mb-1">{{ loop.index }}. {{ question.statement }}</p>
+            <div class="small text-muted">
+              {{ question.option_label(question.correct_option) }} is correct
+            </div>
+            <form method="post" action="{{ url_for('delete_question', question_id=question.id) }}" class="d-inline" onsubmit="return confirm('Remove question?');">
+              <button class="btn btn-sm btn-outline-danger mt-2">Remove</button>
+            </form>
+          </li>
+          {% else %}
+          <li class="list-group-item text-muted">Add a question to start the quiz.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

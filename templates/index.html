@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Master | Home{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="p-5 bg-white rounded shadow-sm">
+      <h1 class="display-6">Quiz Master</h1>
+      <p class="lead">
+        Build confidence with  subject quizzes. Register, select a chapter, and track your progress.
+      </p>
+      <div>
+        <a class="btn btn-outline-primary me-2" href="{{ url_for('register') }}">Register</a>
+        <a class="btn btn-primary" href="{{ url_for('login') }}">Log In</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-lg-8 mb-4">
+    <div class="card shadow">
+      <div class="card-body">
+        <h5 class="card-title">Subjects</h5>
+        <div class="row g-3">
+          {% for subject in subjects %}
+          <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body">
+                <h5 class="card-title">{{ subject.name }}</h5>
+                <p class="card-text">{{ subject.description or 'No description yet.' }}</p>
+                <a href="{{ url_for('subject_chapters', subject_id=subject.id) }}" class="stretched-link"></a>
+              </div>
+            </div>
+          </div>
+          {% else %}
+          <div class="col-12">
+            <p class="text-muted">No subjects configured yet.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Upcoming quizzes</h5>
+        <ul class="list-group list-group-flush">
+          {% for quiz in upcoming_quizzes %}
+          <li class="list-group-item">
+            <strong>{{ quiz.title }}</strong>
+            <div class="text-muted small">
+              {{ quiz.chapter.name }} · {{ quiz.chapter.subject.name }}
+            </div>
+            <div class="small">
+              {{ quiz.date_of_quiz.strftime('%b %d, %Y') if quiz.date_of_quiz else 'Date TBD' }}
+            </div>
+          </li>
+          {% else %}
+          <li class="list-group-item text-muted">No quizzes scheduled.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-8 mb-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="card-title">Try out a sample quiz</h5>
+        <p class="text-muted small">
+          Browse five curated questions so you can see the format before signing in.
+        </p>
+        <ol class="list-group list-group-numbered">
+          {% for entry in sample_quiz %}
+          <li class="list-group-item border-light">
+            <div class="fw-semibold">{{ entry.statement }}</div>
+            <ul class="list-unstyled small mb-0">
+              {% for option in entry.options %}
+              <li class="text-muted">• {{ option }}</li>
+              {% endfor %}
+            </ul>
+          </li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

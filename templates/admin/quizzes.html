@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Quizzes | Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Add quiz</h5>
+        <form method="post">
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            {{ form.chapter_id.label(class_="form-label") }}
+            {% if not form.chapter_id.choices %}
+            <div class="alert alert-warning small">Create a chapter before adding quizzes.</div>
+            {{ form.chapter_id(class_="form-select", disabled=True) }}
+            {% else %}
+            {{ form.chapter_id(class_="form-select") }}
+            {% endif %}
+          </div>
+          <div class="mb-3">
+            {{ form.title.label(class_="form-label") }}
+            {{ form.title(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.date_of_quiz.label(class_="form-label") }}
+            {{ form.date_of_quiz(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.duration_minutes.label(class_="form-label") }}
+            {{ form.duration_minutes(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.remarks.label(class_="form-label") }}
+            {{ form.remarks(class_="form-control", rows=2) }}
+          </div>
+          <div class="d-grid">
+            {{ form.submit(class_="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Quizzes</h5>
+        <ul class="list-group list-group-flush">
+          {% for quiz in quizzes %}
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between gap-2">
+              <div>
+                <strong>{{ quiz.title }}</strong>
+                <p class="mb-1 small text-muted">
+                  {{ quiz.chapter.name }} · {{ quiz.chapter.subject.name }}
+                </p>
+                <p class="mb-0 text-muted small">
+                  {{ quiz.date_of_quiz.strftime('%b %d, %Y') if quiz.date_of_quiz else 'Date TBD' }} · {{ quiz.duration_str() }}
+                </p>
+              </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <a href="{{ url_for('manage_questions', quiz_id=quiz.id) }}" class="btn btn-outline-info">Questions</a>
+                <a href="{{ url_for('edit_quiz', quiz_id=quiz.id) }}" class="btn btn-outline-secondary">Edit</a>
+                <form method="post" action="{{ url_for('delete_quiz', quiz_id=quiz.id) }}" onsubmit="return confirm('Delete quiz?');">
+                  <button class="btn btn-outline-danger">Delete</button>
+                </form>
+              </div>
+            </div>
+          </li>
+          {% else %}
+          <li class="list-group-item text-muted">No quizzes yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

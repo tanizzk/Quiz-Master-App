@@ -1,0 +1,65 @@
+:root {
+  --bg: #f5f6fb;
+  --card: #fefefe;
+  --text: #0f172a;
+  --muted: #6c757d;
+  --border: #e9ecef;
+  --primary: #0d6efd;
+  --navbar: #8225d3;
+}
+
+[data-theme="dark"] {
+  --bg: #0b111a;
+  --card: #1e2740;
+  --text: #f7f7fb;
+  --muted: #aeb0c3;
+  --border: #2f3644;
+  --primary: #6ac5ff;
+  --navbar: #121a2b;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+.navbar {
+  background-color: var(--navbar) !important;
+}
+.navbar .nav-link {
+  color: rgba(255, 255, 255, 0.9);
+}
+.card {
+  background: var(--card);
+  border-color: var(--border);
+  color: var(--text);
+}
+.progress {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.progress .progress-bar {
+  background: var(--primary);
+}
+.dashboard-card {
+  border-radius: 3rem;
+}
+.quiz-flashcard {
+  min-height: 360px;
+}
+.quiz-question {
+  display: none;
+  backface-visibility: hidden;
+  transform-origin: center;
+  transform: perspective(600px) rotateY(90deg);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
+}
+.quiz-question.active {
+  display: block;
+  transform: perspective(600px) rotateY(0deg);
+  opacity: 1;
+}
+.quiz-progress {
+  font-size: 0.9rem;
+  color: var(--muted);
+}

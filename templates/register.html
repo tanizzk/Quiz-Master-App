@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Register | Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title mb-4">Create an account</h3>
+        <form method="post">
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            {{ form.email.label(class_="form-label") }}
+            {{ form.email(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.full_name.label(class_="form-label") }}
+            {{ form.full_name(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.qualification.label(class_="form-label") }}
+            {{ form.qualification(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.dob.label(class_="form-label") }}
+            {{ form.dob(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.password.label(class_="form-label") }}
+            {{ form.password(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.confirm_password.label(class_="form-label") }}
+            {{ form.confirm_password(class_="form-control") }}
+          </div>
+          <div class="d-grid">
+            {{ form.submit(class_="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

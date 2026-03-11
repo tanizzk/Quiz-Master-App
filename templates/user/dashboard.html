@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-1">{{ current_user.full_name or current_user.email }}</h4>
+            <p class="mb-0 text-muted">{{ current_user.qualification or "Qualification not set" }}</p>
+            <p class="mb-0 text-muted">
+              {{ current_user.dob.strftime("%b %d, %Y") if current_user.dob else "DOB not provided" }}
+            </p>
+          </div>
+          <span class="badge rounded-pill bg-info text-dark">Logged in</span>
+        </div>
+        <div class="mt-3">
+          <p class="small text-muted mb-2">Next available quizzes</p>
+          <p class="fs-6 text-muted">Pick a topic below to start a fresh attempt.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Score history</h5>
+        <canvas id="scoreChart" height="150"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="card-title mb-0">Available quizzes</h5>
+          <span class="badge bg-light text-dark">{{ available_quizzes|length }} available</span>
+        </div>
+        <div class="list-group list-group-flush">
+          {% for quiz in available_quizzes %}
+          <div class="list-group-item px-0 border-0">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ quiz.title }}</strong>
+                <p class="mb-1 text-muted small">
+                  {{ quiz.chapter.subject.name }} · {{ quiz.chapter.name }}
+                </p>
+                <p class="text-muted small">
+                  {{ quiz.date_of_quiz.strftime('%b %d, %Y') if quiz.date_of_quiz else 'Date TBD' }} ·
+                  {{ quiz.duration_str() }}
+                </p>
+              </div>
+              <a href="{{ url_for('take_quiz', quiz_id=quiz.id) }}" class="btn btn-outline-primary btn-sm">Start</a>
+            </div>
+          </div>
+          {% else %}
+          <div class="list-group-item border-0 px-0">
+            <p class="text-muted mb-0">No quizzes published yet.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Recent attempts</h5>
+        <ul class="list-group list-group-flush">
+          {% for row in history %}
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between">
+              <div>
+                <strong>{{ row.quiz }}</strong>
+                <p class="mb-0 small text-muted">{{ row.timestamp|replace('T', ' ') }}</p>
+              </div>
+              <span class="badge rounded-pill bg-success">{{ row.score }}/{{ row.max_score }}</span>
+            </div>
+          </li>
+          {% else %}
+          <li class="list-group-item text-muted">You have no recorded attempts.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% set chart_labels = chart_data.labels|default([]) %}
+{% set chart_scores = chart_data.scores|default([]) %}
+{% set chart_max = chart_data.max|default([]) %}
+
+{% if chart_labels %}
+<script>
+  const scoreCtx = document.getElementById("scoreChart");
+  if (scoreCtx) {
+    new Chart(scoreCtx, {
+      type: "line",
+      data: {
+        labels: {{ chart_labels|tojson }},
+        datasets: [
+          {
+            label: "Score",
+            data: {{ chart_scores|tojson }},
+            borderColor: "#0d6efd",
+            tension: 0.3,
+            fill: false,
+          },
+          {
+            label: "Max",
+            data: {{ chart_max|tojson }},
+            borderColor: "#6c757d",
+            borderDash: [5, 5],
+            tension: 0.3,
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true },
+        },
+      },
+    });
+  }
+</script>
+{% endif %}
+{% endblock %}

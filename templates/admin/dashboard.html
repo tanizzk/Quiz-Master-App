@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body">
+        <h6>Subjects</h6>
+        <strong class="fs-3">{{ subject_count }}</strong>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body">
+        <h6>Chapters</h6>
+        <strong class="fs-3">{{ chapter_count }}</strong>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body">
+        <h6>Quizzes</h6>
+        <strong class="fs-3">{{ quiz_count }}</strong>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card dashboard-card shadow-sm border-0">
+      <div class="card-body">
+        <h6>Users</h6>
+        <strong class="fs-3">{{ user_count }}</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Platform Health</h5>
+        <canvas id="adminChart" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Recent scores</h5>
+        <ul class="list-group list-group-flush">
+          {% for score in recent_scores %}
+          <li class="list-group-item">
+            <strong>{{ score.quiz.title }}</strong>
+            <div class="small text-muted">
+              {{ score.user.full_name }} · {{ score.total_scored }}/{{ score.max_score }} · {{ score.timestamp.strftime('%b %d, %Y %I:%M %p') }}
+            </div>
+          </li>
+          {% else %}
+          <li class="list-group-item text-muted">No attempts yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <a href="{{ url_for('admin_subjects') }}" class="btn btn-outline-primary w-100">Manage Subjects</a>
+  </div>
+  <div class="col-md-4">
+    <a href="{{ url_for('admin_chapters') }}" class="btn btn-outline-secondary w-100">Manage Chapters</a>
+  </div>
+  <div class="col-md-4">
+    <a href="{{ url_for('admin_quizzes') }}" class="btn btn-outline-success w-100">Manage Quizzes</a>
+  </div>
+</div>
+
+<script>
+  const ctx = document.getElementById("adminChart");
+  if (ctx) {
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: {{ chart_data.labels|tojson }},
+        datasets: [
+          {
+            label: "Count",
+            data: {{ chart_data.counts|tojson }},
+            backgroundColor: ["#0d6efd", "#6f42c1", "#198754", "#fd7e14"],
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true },
+        },
+      },
+    });
+  }
+</script>
+{% endblock %}

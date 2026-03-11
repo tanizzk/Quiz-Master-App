@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Quiz | Quiz Master{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="mb-4">Edit Quiz</h4>
+        <form method="post">
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            {{ form.chapter_id.label(class_="form-label") }}
+            {{ form.chapter_id(class_="form-select") }}
+          </div>
+          <div class="mb-3">
+            {{ form.title.label(class_="form-label") }}
+            {{ form.title(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.date_of_quiz.label(class_="form-label") }}
+            {{ form.date_of_quiz(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.duration_minutes.label(class_="form-label") }}
+            {{ form.duration_minutes(class_="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.remarks.label(class_="form-label") }}
+            {{ form.remarks(class_="form-control", rows=2) }}
+          </div>
+          <div class="d-grid">
+            {{ form.submit(class_="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
